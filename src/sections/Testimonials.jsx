@@ -2,8 +2,8 @@ import React from 'react'
 
 const Testimonials = () => {
     return (
-        <div>Testimonials</div>
+        <div className='w-full h-screen'>Testimonials</div>
     )
 }
 
-export default Testimonials
+export default Testimonials;
