@@ -1,23 +1,33 @@
+import { useEffect, useRef } from "react";
 
-import React, { useEffect, useRef } from 'react'
-
+/**
+ * ParticlesBackground Component
+ * - Lightweight particle system using canvas
+ * - Fully responsive and high-DPI ready
+ * - Respects prefers-reduced-motion for accessibility
+ */
 const ParticlesBackground = () => {
-
     const canvasRef = useRef(null);
 
     useEffect(() => {
         const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (prefersReducedMotion) return;
+
         let particles = [];
-        const particleCount = 50;
-        const colors = ['rgba(255,255,255,0.7)'];
+        const BASE_PARTICLES = 50;
+        const COLORS = ["rgba(255,255,255,0.7)"];
 
         class Particle {
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
                 this.radius = Math.random() * 2 + 1;
-                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
                 this.speedX = (Math.random() - 0.5) * 0.5;
                 this.speedY = (Math.random() - 0.5) * 0.5;
             }
@@ -32,54 +42,47 @@ const ParticlesBackground = () => {
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
-
                 if (this.x < 0) this.x = canvas.width;
                 if (this.x > canvas.width) this.x = 0;
                 if (this.y < 0) this.y = canvas.height;
                 if (this.y > canvas.height) this.y = 0;
-
                 this.draw();
             }
         }
-        function createParticles() {
+
+        const createParticles = () => {
             particles = [];
-            for (let i = 0; i < particleCount; i++) {
-                particles.push(new Particle());
-            }
-        }
+            const particleCount = Math.min(BASE_PARTICLES, window.innerWidth / 15); // Adaptive
+            for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+        };
 
-        function handleResize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        const handleResize = () => {
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+            canvas.style.width = `${window.innerWidth}px`;
+            canvas.style.height = `${window.innerHeight}px`;
+            ctx.scale(dpr, dpr);
             createParticles();
-        }
+        };
         handleResize();
-
         window.addEventListener("resize", handleResize);
 
         let animationId;
-        function animate() {
+        const animate = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach((p) => p.update());
+            particles.forEach(p => p.update());
             animationId = requestAnimationFrame(animate);
-        }
+        };
         animate();
 
         return () => {
             cancelAnimationFrame(animationId);
             window.removeEventListener("resize", handleResize);
-        }
-
+        };
     }, []);
 
-    return (
-        <canvas
-            ref={canvasRef}
-            className='fixed top-0 left-0 w-full h-full pointer-events-none z-0'
-        >
+    return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full pointer-events-none z-0" />;
+};
 
-        </canvas>
-    )
-}
-
-export default ParticlesBackground
+export default ParticlesBackground;

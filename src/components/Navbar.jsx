@@ -1,92 +1,98 @@
-import React, { useEffect, useRef, useState } from 'react'
-import OverlayMenu from './OverlayMenu'
-import Logo from '../assets/img2.jpg';
-import { FiMenu } from 'react-icons/fi';
-const Navbar = () => {
-    const [menuOpen, setMenuOpen] = useState(false);
-    const [visible, setVisible] = useState(true);
-    const [forceVisible, setForceVisible] = useState(false);
-    const lastScrollY = useRef(0);
-    const timerId = useRef(null);
+import { useEffect, useRef, useState } from "react";
+import OverlayMenu from "./OverlayMenu";
+import Logo from "../assets/img2.jpg";
+import { FiMenu } from "react-icons/fi";
 
+/**
+ * Navbar Component
+ * - Transparent by default (matches your original style)
+ * - Responsive for all screen sizes
+ * - Scroll behavior: hides on scroll down, shows on scroll up
+ * - Hamburger menu for mobile screens
+ */
+const Navbar = ({ brandName = "Shubham" }) => {
+    const [menuOpen, setMenuOpen] = useState(false); // Overlay menu state
+    const [visible, setVisible] = useState(true); // Navbar show/hide
+
+    const lastScrollY = useRef(0); // Track last scroll position
+    const isInHome = useRef(true); // Track if user is at #home section
+
+    // 🔹 Observe home section
     useEffect(() => {
-        const homeSection = document.querySelector('#home');
+        const homeSection = document.querySelector("#home");
+        if (!homeSection) return;
+
         const observer = new IntersectionObserver(
             ([entry]) => {
-                if (entry.isIntersecting) {
-                    setForceVisible(true);
-                    setVisible(true);
-                } else {
-                    setForceVisible(false);
-                }
-            }, { threshold: 0.1 }
-        )
-        if (homeSection) observer.observe(homeSection);
-        return () => {
-            if (homeSection) observer.unobserve(homeSection);
-        }
+                isInHome.current = entry.isIntersecting;
+                if (entry.isIntersecting) setVisible(true); // Keep navbar visible in home section
+            },
+            { threshold: 0.1 }
+        );
+
+        observer.observe(homeSection);
+        return () => observer.disconnect(); // Cleanup observer on unmount
     }, []);
 
+    // 🔹 Show/hide navbar on scroll
     useEffect(() => {
         const handleScroll = () => {
-            if (forceVisible) {
-                setVisible(true);
-                return;
-            }
-            const currentScrollY = window.scrollY;
-            if (currentScrollY > lastScrollY.current) {
-                setVisible(false);
-            } else {
-                setVisible(true);
+            if (isInHome.current) return; // Don't hide in home section
 
-                if (timerId.current) clearTimeout(timerId.current);
-                timerId.current = setTimeout(() => {
-                    setVisible(false);
-                }, 3000);
-            }
+            const currentScrollY = window.scrollY;
+
+            if (currentScrollY > lastScrollY.current) setVisible(false); // scrolling down → hide
+            else setVisible(true); // scrolling up → show
+
             lastScrollY.current = currentScrollY;
-        }
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-            if (timerId.current) clearTimeout(timerId.current);
-        }
-    }, [forceVisible]);
+        };
+
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
     return (
         <>
-            <nav className={`fixed top-0 left-0 w-full flex items-center justify-between px-6 py-4 z-50 transition-transform duration-300 ${visible ? 'translate-y-0' : 'translate-y-full'}`}>
-                <div className='flex items-center space-x-2'>
+            <nav
+                className={`fixed top-0 left-0 w-full z-50 px-4 sm:px-6 py-4 flex items-center justify-between
+        transition-transform duration-300 ${visible ? "translate-y-0" : "-translate-y-full"}`}
+            >
+                {/* Logo */}
+                <div className="flex items-center space-x-2">
                     <img
-                        className='w-8 h-8'
-                        src={Logo} alt="logo"
+                        src={Logo}
+                        alt={`${brandName} logo`}
+                        className="w-8 h-8"
                     />
-                    <div className='text-2xl font-bold text-white hidden sm:block'>
-                        Shubham
-                    </div>
+                    <span className="hidden sm:block text-2xl font-bold text-white">
+                        {brandName}
+                    </span>
                 </div>
-                <div className='block lg:absolute lg:left-1/2 lg:transform lg:-translate-x-1/2'>
-                    <button
-                        onClick={() => setMenuOpen(true)}
-                        className='text-white text-3xl focus:outline-none'
-                        aria-level="Open Menu"
-                    >
-                        <FiMenu />
-                    </button>
-                </div>
-                <div className='hidden lg:block'>
+
+                {/* Hamburger menu */}
+                <button
+                    onClick={() => setMenuOpen(true)}
+                    aria-label="Open menu"
+                    className="text-white text-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded"
+                >
+                    <FiMenu />
+                </button>
+
+                {/* Desktop CTA */}
+                <div className="hidden lg:block">
                     <a
                         href="#contact"
-                        className='bg-linear-to-r from-pink-500 to-blue-500 text-white px-5 py-2 rounded-full font-medium shadow-lg hover:opacity-90 transition-opacity duration-300'
-                    >Reach Out</a>
-
+                        className="bg-linear-to-r from-pink-500 to-blue-500 text-white px-5 py-2 rounded-full font-medium shadow-lg hover:opacity-90 transition-opacity"
+                    >
+                        Reach Out
+                    </a>
                 </div>
-
             </nav>
+
+            {/* Overlay menu */}
             <OverlayMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
         </>
+    );
+};
 
-    )
-}
-
-export default Navbar
+export default Navbar;

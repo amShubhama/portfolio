@@ -13,11 +13,11 @@ import CustomCursor from './components/CustomCursor';
 import IntroAnimation from './components/IntroAnimation';
 
 const App = () => {
-  const [isIntroDone, setIsIntroDone] = useState(false);
+  const [showIntro, setShowIntro] = useState(false);
   return (
     <>
-      {!isIntroDone && <IntroAnimation onFinish={() => setIsIntroDone(true)} />}
-      {isIntroDone && (
+      {!showIntro && <IntroAnimation onFinish={() => setShowIntro(true)} />}
+      {showIntro && (
         <div className='relative gradient text-white'>
           {/* <ParticlesBackground /> */}
           <CustomCursor />
