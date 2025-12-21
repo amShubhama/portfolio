@@ -26,7 +26,7 @@ const OverlayMenu = ({ isOpen, onClose }) => {
                     <button
                         onClick={onClose}
                         aria-label="Close menu"
-                        className="absolute top-6 right-6 text-white text-3xl"
+                        className="absolute top-6 right-6 text-white text-3xl cursor-pointer"
                     >
                         <FiX />
                     </button>

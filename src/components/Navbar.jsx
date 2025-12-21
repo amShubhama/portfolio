@@ -69,23 +69,25 @@ const Navbar = ({ brandName = "Shubham" }) => {
                     </span>
                 </div>
 
-                {/* Hamburger menu */}
-                <button
-                    onClick={() => setMenuOpen(true)}
-                    aria-label="Open menu"
-                    className="text-white text-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded"
-                >
-                    <FiMenu />
-                </button>
+                <div className="flex gap-3 justify-center items-center">
+                    {/* Desktop CTA */}
+                    <div className="hidden lg:block">
+                        <a
+                            href="#contact"
+                            className="bg-linear-to-r from-pink-500 to-blue-500 text-white px-5 py-2 rounded-full font-medium shadow-lg hover:opacity-90 transition-opacity"
+                        >
+                            Reach Out
+                        </a>
+                    </div>
 
-                {/* Desktop CTA */}
-                <div className="hidden lg:block">
-                    <a
-                        href="#contact"
-                        className="bg-linear-to-r from-pink-500 to-blue-500 text-white px-5 py-2 rounded-full font-medium shadow-lg hover:opacity-90 transition-opacity"
+                    {/* Hamburger menu */}
+                    <button
+                        onClick={() => setMenuOpen(true)}
+                        aria-label="Open menu"
+                        className="text-white text-4xl focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded cursor-pointer"
                     >
-                        Reach Out
-                    </a>
+                        <FiMenu />
+                    </button>
                 </div>
             </nav>
 
