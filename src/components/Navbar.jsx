@@ -57,16 +57,16 @@ const Navbar = ({ brandName = "Shubham" }) => {
                 className={`fixed top-0 left-0 w-full z-50 px-4 sm:px-6 py-4 flex items-center justify-between
         transition-transform duration-300 ${visible ? "translate-y-0" : "-translate-y-full"}`}
             >
-                {/* Logo */}
+                {/* Logo do later*/}
                 <div className="flex items-center space-x-2">
-                    <img
+                    {/* {<img
                         src={Logo}
                         alt={`${brandName} logo`}
                         className="w-8 h-8"
                     />
                     <span className="hidden sm:block text-2xl font-bold text-white">
                         {brandName}
-                    </span>
+                    </span>} */}
                 </div>
 
                 <div className="flex gap-3 justify-center items-center">
